@@ -1,3 +1,4 @@
+//Import express
 const express = require("express");
 
 //Add parenthesis because express is just a function and we want it to run
@@ -7,61 +8,75 @@ app.use(express.json());
 
 let data = [
   {
-    prod: "iphone",
+    id: 1,
+    name: "iphone",
+    description: 'random data description right here'
   },
   {
-    prod: "samsung",
+    id: 2,
+    name: "samsung",
+    description: 'random data description right here'
   },
   {
-    prod: "nokia",
+    id: 3,
+    name: "nokia",
+    description: 'random data description right here'
   },
   {
-    prod: "tecno",
+    id: 4,
+    name: "tecno",
+    description: 'random data description right here'
   },
 ];
 
 /* Get request */
-const getHi = (req, res) => {
-  res.send(`Products: ${data}`);
+const getProduct = (req, res) => {
   console.log(`GET request made`);
+  try {
+    res.json({
+      message: 'OK',
+      data
+    })
+  } catch {
+    res.json({
+      message: 'Ooops! Something went wrong 😧'
+    })
+  }
 };
-
-app.get("/", getHi);
 
 /* Post request */
-
-const postHi = (req, res) => {
-  const newProduct = req.body;
-  data.push(newProduct);
-  res.send(`New Product: ${JSON.stringify(newProduct)} added!`);
+const postProduct = (req, res) => {
   console.log(`POST request made`);
+
+  const { name, description } = req.body;
+  
+  const newProduct = {
+    id: data.length +1,
+    name,
+    description
+  }
+
+  try { 
+    data.push(newProduct);
+    res.json({
+      message: `New Product: ${newProduct.name} added!`,
+      data: newProduct
+    })
+  }
+  catch{
+    res.json({
+      message: 'Oooops! Something wrong happened here'
+    })
+  }
 };
 
-app.post("/add", postHi);
-
 /* Delete request */
-// const deleteHi = (req, res) => {
-//   // find item from array of data
-//   let found = data.find( product => { return product === JSON.stringify(req.body)})
-// //   let found = data.find(item => {
-// //     return item.id === parseInt(req.params.id);
-// // });
-
-// if (found) {
-//     // if item found then find index at which the item is
-//     // stored in the `data` array
-//     let targetIndex = data.indexOf(found);
-
-//     // splice means delete item from `data` array using index
-//     data.splice(targetIndex, 1);
-
-//   // const deleteProd = req.body;
-//   // data.filter( product => { return product === deleteProd? product: ''})
-//   res.send(`Deleted: ${JSON.stringify(data)} and target index ${targetIndex}` );
-//   console.log("Delete request made!");
-// }};
-
-const deleteHi = (req, res) => {
+const deleteProduct = (req, res) => {
+  /**
+   * loop through products
+   * compare id on route with product.id
+   * splice the object
+   */
   const index = data.findIndex((product) => product === { c: "nokia" });
   if (index > -1) {
     data.splice(index, 1);
@@ -70,17 +85,26 @@ const deleteHi = (req, res) => {
   console.log(index);
 };
 
-app.delete("/delete", deleteHi);
-
 /* Update request */
-const putHi = (req, res) => {
+const putProduct = (req, res) => {
+  console.log("PUT request made!");
+  const {id, name, description}= req.body
+  /**
+   * find product by id
+   * replace data existing in-memory with what was sent in req.body
+   */
+
   res.send("Put request");
-  console.log("Put request made!");
 };
 
-app.put("/update", putHi);
+/** app routes */
+app.get("/", getProduct);
+app.post("/add", postProduct);
+app.delete("/delete", deleteProduct);
+app.put("/update", putProduct);
 
-//setting server to listen for requests on port 5000
-app.listen(5000, () => {
-  console.log(`Server is running on port 5000.`);
+
+//setting server to listen for requests on port 8080
+app.listen(8080, () => {
+  console.log(`Server is running smoothly on port 8080.`);
 });
