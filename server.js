@@ -10,22 +10,22 @@ let data = [
   {
     id: 1,
     name: "iphone",
-    description: 'random data description right here'
+    description: "random data description right here",
   },
   {
     id: 2,
     name: "samsung",
-    description: 'random data description right here'
+    description: "random data description right here",
   },
   {
     id: 3,
     name: "nokia",
-    description: 'random data description right here'
+    description: "random data description right here",
   },
   {
     id: 4,
     name: "tecno",
-    description: 'random data description right here'
+    description: "random data description right here",
   },
 ];
 
@@ -34,13 +34,13 @@ const getProduct = (req, res) => {
   console.log(`GET request made`);
   try {
     res.json({
-      message: 'OK',
-      data
-    })
+      message: "OK",
+      data,
+    });
   } catch {
     res.json({
-      message: 'Ooops! Something went wrong 😧'
-    })
+      message: "Ooops! Something went wrong 😧",
+    });
   }
 };
 
@@ -49,24 +49,23 @@ const postProduct = (req, res) => {
   console.log(`POST request made`);
 
   const { name, description } = req.body;
-  
-  const newProduct = {
-    id: data.length +1,
-    name,
-    description
-  }
 
-  try { 
+  const newProduct = {
+    id: data.length + 1,
+    name,
+    description,
+  };
+
+  try {
     data.push(newProduct);
     res.json({
       message: `New Product: ${newProduct.name} added!`,
-      data: newProduct
-    })
-  }
-  catch{
+      data: newProduct,
+    });
+  } catch {
     res.json({
-      message: 'Oooops! Something wrong happened here'
-    })
+      message: "Oooops! Something wrong happened here",
+    });
   }
 };
 
@@ -77,7 +76,8 @@ const deleteProduct = (req, res) => {
    * compare id on route with product.id
    * splice the object
    */
-  const index = data.findIndex((product) => product === { c: "nokia" });
+
+  const index = data.findIndex((product) => product.id === req.body.id);
   if (index > -1) {
     data.splice(index, 1);
   }
@@ -87,14 +87,19 @@ const deleteProduct = (req, res) => {
 
 /* Update request */
 const putProduct = (req, res) => {
-  console.log("PUT request made!");
-  const {id, name, description}= req.body
+  const { id, name, description } = req.body;
   /**
    * find product by id
    * replace data existing in-memory with what was sent in req.body
    */
-
-  res.send("Put request");
+  data.map((product) => {
+    if (product.id === id) {
+      product.name = name;
+      product.description = description;
+    }
+  });
+  res.send(data);
+  console.log("PUT request made!");
 };
 
 /** app routes */
@@ -102,7 +107,6 @@ app.get("/", getProduct);
 app.post("/add", postProduct);
 app.delete("/delete", deleteProduct);
 app.put("/update", putProduct);
-
 
 //setting server to listen for requests on port 8080
 app.listen(8080, () => {
