@@ -39,7 +39,7 @@ const getProduct = (req, res) => {
     });
   } catch {
     res.json({
-      message: "Ooops! Something went wrong 😧",
+      message: "Oops! Something went wrong 😧",
     });
   }
 };
@@ -64,42 +64,56 @@ const postProduct = (req, res) => {
     });
   } catch {
     res.json({
-      message: "Oooops! Something wrong happened here",
+      message: "Oops! Something went wrong 🥴",
     });
   }
 };
 
 /* Delete request */
 const deleteProduct = (req, res) => {
+	console.log("DELETE request successful!");
   /**
    * loop through products
    * compare id on route with product.id
    * splice the object
    */
-
-  const index = data.findIndex((product) => product.id === req.body.id);
-  if (index > -1) {
-    data.splice(index, 1);
+  try {
+    const index = data.findIndex((product) => product.name === req.body.name);
+    if (index > -1) {
+      data.splice(index, 1);
+    }
+    res.json({
+      message: `Product: ${req.body.name} has been deleted successfully!`,
+      data
+    })
+  } catch {
+    res.json({
+      message: "Oops! Something went wrong 😤",
+    });
   }
-  res.send(data);
-  console.log(index);
 };
 
 /* Update request */
 const putProduct = (req, res) => {
+  console.log("Update successfully made!");
   const { id, name, description } = req.body;
   /**
    * find product by id
    * replace data existing in-memory with what was sent in req.body
    */
-  data.map((product) => {
-    if (product.id === id) {
-      product.name = name;
-      product.description = description;
-    }
-  });
-  res.send(data);
-  console.log("PUT request made!");
+  try {
+    data.map((product) => {
+      if (product.id === id) {
+        product.name = name;
+        product.description = description;
+      }
+    });
+    res.send(data);
+  } catch {
+    res.json({
+      message: "Oops! Something went wrong 🤪",
+    });
+  }
 };
 
 /** app routes */
