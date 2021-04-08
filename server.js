@@ -9,23 +9,26 @@ app.use(express.json());
 let data = [
   {
     id: 1,
-    name: "iphone",
-    description: "random data description right here",
+    name: "iPhone 12 Pro",
+    description:
+      "A14 Bionic. All-new design. Ceramic Shield. LiDAR Scanner. A Pro camera system optimized for low light.",
   },
   {
     id: 2,
-    name: "samsung",
-    description: "random data description right here",
+    name: "Galaxy S21 Ultra 5G",
+    description:
+      "It reaches faster 5G speeds with our industry-leading chipset, all while creating a revolution in photography.",
   },
   {
     id: 3,
-    name: "nokia",
-    description: "random data description right here",
+    name: "Nokia 8.3 5G",
+    description: "Shoot pro videos, share with 5G.",
   },
   {
     id: 4,
-    name: "tecno",
-    description: "random data description right here",
+    name: "Tecno Camon16 Premier",
+    description:
+      "The pioneer camera phone, won multiple world-class awards nad international media honor.",
   },
 ];
 
@@ -71,21 +74,26 @@ const postProduct = (req, res) => {
 
 /* Delete request */
 const deleteProduct = (req, res) => {
-	console.log("DELETE request successful!");
+  console.log("DELETE request successful!");
+  const { id } = req.params;
+
   /**
    * loop through products
    * compare id on route with product.id
    * splice the object
    */
   try {
-    const index = data.findIndex((product) => product.name === req.body.name);
-    if (index > -1) {
-      data.splice(index, 1);
-    }
+    const product = data.filter((product) => {
+      return product.id === Number(id);
+    });
+
+    const index = data.indexOf(product[0]);
+
+    data.splice(index, 1);
     res.json({
-      message: `Product: ${req.body.name} has been deleted successfully!`,
-      data
-    })
+      message: `Product: ${id} has been deleted successfully!`,
+      data,
+    });
   } catch {
     res.json({
       message: "Oops! Something went wrong 😤",
@@ -94,21 +102,23 @@ const deleteProduct = (req, res) => {
 };
 
 /* Update request */
-const putProduct = (req, res) => {
+const updateData = (req, res) => {
   console.log("Update successfully made!");
-  const { id, name, description } = req.body;
+  const { name, description } = req.body;
+  const { id } = req.params;
   /**
    * find product by id
    * replace data existing in-memory with what was sent in req.body
    */
   try {
-    data.map((product) => {
-      if (product.id === id) {
+    let update = data.filter((product) => {
+      if (product.id === Number(id)) {
         product.name = name;
         product.description = description;
+        return product;
       }
     });
-    res.send(data);
+    res.send(update);
   } catch {
     res.json({
       message: "Oops! Something went wrong 🤪",
@@ -118,9 +128,9 @@ const putProduct = (req, res) => {
 
 /** app routes */
 app.get("/", getProduct);
-app.post("/add", postProduct);
-app.delete("/delete", deleteProduct);
-app.put("/update", putProduct);
+app.post("/product", postProduct);
+app.delete("/product/:id", deleteProduct);
+app.put("/product/:id", updateData);
 
 //setting server to listen for requests on port 8080
 app.listen(8080, () => {
